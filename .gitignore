@@ -1,1 +1,4 @@
 /Homework Zips/*
+*.o
+*.axf*
+*.srec
