@@ -4,8 +4,7 @@
 // 26 February 2020
 
 /******************************************************************************
-* address_map_arm.h - provides definitions for common values that exist in the 
-*					  system.
+* defines.h - provides definitions for common values that exist in the system.
 *
 * File is unchanged with the exception of this header and the inclusion of KEYS
 * 2 and 3, original taken from Intel FPGA monitor program interrupt sample 

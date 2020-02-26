@@ -4,8 +4,7 @@
 // 26 February 2020
 
 /******************************************************************************
-* address_map_arm.h - provides definitions for common values that exist in the 
-*					  system.
+* defines.h - provides definitions for common values that exist in the system.
 *
 * File is unchanged with the exception of this header and the inclusion of KEYS
 * 2 and 3, original taken from Intel FPGA monitor program interrupt sample 
@@ -17,11 +16,11 @@
 #define		CPU0					0x01	// bit-mask; bit 0 represents cpu0
 #define		ENABLE					0x1
 
-#define		KEY0 					0
-#define		KEY1 					1
-#define		KEY2					2
-#define		KEY3					3
-#define		NONE					4
+#define		KEY0 					1
+#define		KEY1 					2
+#define		KEY2					4
+#define		KEY3					8
+#define		NONE					16
 
 #define		USER_MODE				0b10000
 #define		FIQ_MODE				0b10001

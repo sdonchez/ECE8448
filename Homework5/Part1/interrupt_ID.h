@@ -4,7 +4,7 @@
 // 26 February 2020
 
 /******************************************************************************
-* address_map_arm.h - provides interrupt IDs
+* interrupt_ID.h - provides interrupt IDs
 *
 * File is unchanged with the exception of this header, taken from Intel FPGA
 * monitor program interrupt sample program
