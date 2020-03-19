@@ -12,6 +12,8 @@
 #include "intelfpgaup/audio.h"      //intel provided audio interface
 #include <math.h>                   //standard c math library
 #include <string.h>                 //for string length checking
+#include <stdio.h>                  //printf
+#include <stdlib.h>                 //exit
 
 #define PI (4.0 * (atan(1.0)))      //since M_PI isn't actually standardized
 
