@@ -3,3 +3,5 @@
 *.axf*
 *.srec
 \.vs
+*.tlog
+*.log
