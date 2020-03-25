@@ -27,7 +27,7 @@ sdonchez@villanova.edu
 ## Part 1
 
 ### Important Files (in \Homework6\Part1)
--   __main.c__ - main routine and tone generation subroutinesinputs
+-   __main.c__ - main routine and tone generation subroutines
 -   __include\tone.h__ - defines tones as outlined in project assignment
 -   __bin\ARM\Release\Part1.out__ precompiled executable (same is found in bin\ARM\debug)
 
@@ -37,9 +37,20 @@ sdonchez@villanova.edu
 ## Part 2
 
 ### Important Files (in \Homework6\Part2)
--   __main.c__ - main routine and tone generation subroutinesinputs
+-   __main.c__ - main routine and tone generation subroutines
 -   __include\tone.h__ - defines tones as outlined in project assignment
 -   __bin\ARM\Release\Part2.out__ precompiled executable (same is found in bin\ARM\debug)
 
 ### Notes
 -    to compile, execute command __"gcc main.c -o Part2.out -lintelfpgaup -lm -std=c99"__
+
+## Part 2
+
+### Important Files (in \Homework6\Part3)
+-   __main.c__ - main routine, audio subroutines
+-   __include\tone.h__ - defines tones as outlined in project assignment
+-   __include\keyboard.h__ - defines helper functions for keyboard interface
+-   __bin\ARM\Release\Part3.out__ precompiled executable (same is found in bin\ARM\debug)
+
+### Notes
+-    to compile, execute command __"gcc main.c -o Part2.out -lintelfpgaup -lm -pthread -std=c99"__
