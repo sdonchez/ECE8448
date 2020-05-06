@@ -49,14 +49,14 @@ well as proposes avenues for future work.
 ARM TrustZone, Embedded System, System-on-a-Chip, FPGA Security
 \end{IEEEkeywords}
 
-\section{Introduction}
+\section{Introduction} \label{sec:introduction}
 \IEEEPARstart{I}{t} has rapidly become common knowledge within the technology industry, 
-and to some extent in society at large, that the phrase “secure IoT device” is an oxymoron. 
-Recent advances in computer technology have led to a massive surge of smart devices, with 
-a particularly rapid growth in the consumer electronics sector. However, this rapid 
-proliferation of such devices has led to an unfortunate discovery – many of them fail to 
-adequately address security concerns, leading to vulnerabilities that are often harnessed 
-by malicious actors.
+and to some extent in society at large, that the phrase “secure IoT device” is an 
+oxymoron. Recent advances in computer technology have led to a massive surge of smart 
+devices, with a particularly rapid growth in the consumer electronics sector. However, 
+this rapid proliferation of such devices has led to an unfortunate discovery – many of 
+them fail to adequately address security concerns, leading to vulnerabilities that are 
+often harnessed by malicious actors.
 
 As a result, the industry has begun to take a second look at security in embedded systems.
 To this end, ARM ltd., the organization that oversees the development of the ARM processor
@@ -85,35 +85,37 @@ compiler. This poses another avenue for attack - compromised build-chain softwar
 result in a device that performs as expected but presents additional avenues for
 exploitation.
 
-\subsection{Structure of the Paper}
+\subsection{Structure of the Paper} \label{sec:Structure}
 This paper is structured into 8 major sections. The introduction in Section I seeks to
 provide essential context as to the purpose of the ARM TrustZone platform, as well as the 
 additional complexities introduced by using the platform in combination with a FPGA based 
 SoC. Section II provides an explanation of the principles governing the operation of the 
-TrustZone platform itself. Section III, IV, and V discusses the state of current research on
-the vulnerabilities related to the implementation of the ARM TrustZone into both 
+TrustZone platform itself. Section III, IV, and V discusses the state of current research 
+on the vulnerabilities related to the implementation of the ARM TrustZone into both 
 traditional and FPGA-based Embedded Systems, while Section VI describes mitigation
 strategies outlined in this research. Section VII discusses potential avenues for further 
 research. Section VII concludes the paper.
 
-\subsection{A Comment on the State of the Industry}
+\subsection{A Comment on the State of the Industry} \label{sec:SOI Comment}
 Serious consideration of security in FPGA-based Embedded Systems is a novel field for
 research. There are surprisingly few scholarly articles regarding this field, from an even
-smaller pool of researchers. Accordingly, this paper will dar extensively from other works
-on the TrustZone Architecture, many of which may not directly concern FPGA-based devices.
+smaller pool of researchers. Accordingly, this paper will draw extensively from other 
+works on the TrustZone Architecture, many of which may not directly concern FPGA-based 
+devices.
 
-\section{Details of the TrustZone platform}
+\section{Details of the TrustZone platform} \label{sec:TrustZone}
 ARM's TrustZone technology exists to facilitate a Trusted Excecution Environment (TEE), in
-order to enable the execution of "sensitive" tasks in such a way that maintains their
+order to enable the execution of ``sensitive'' tasks in such a way that maintains their
 integrity without imposing massive constraints on system design. It facilitates this TEE
-by means of partitioning the Processing System (PS) into two distinct "worlds" - the
+by means of partitioning the Processing System (PS) into two distinct ``worlds'' - the
 secure world and the normal (interchangably referred to as non-secure) world. The
 technology then polices access to secure world resources to ensure that non-secure tasks
 aren't making erroneous (or malicious) accesses to secure world resources. This is
-accomplished by the system's "Monitor Mode", which performs context switches between worlds
-while also verifying access permissions and the validity of secure-world directed requests.
+accomplished by the system's ``Monitor Mode'', which performs context switches between 
+worlds while also verifying access permissions and the validity of secure-world directed 
+requests.
 
-\subsection{Securing the AXI Bus}
+\subsection{Securing the AXI Bus} \label{sec:Securing AXI Bus}
 TrustZone extends the concept of worlds beyond the PS and into peripherals,
 via an extension to the AMBA3 Advanced eXtensible Interface (AXI) bus protocol. This
 ensures that non-secure bus masters do not have access to secure slaves, while enabling
@@ -135,7 +137,7 @@ or can raise one of two errors: a slave error or a decode error. These errors ar
 on the BRESP (write) and RRESP (read) response signals, another crucial part of the 
 TrustZone's AXI controls. \cite{benhani_security_2017}
 
-\subsection{Securing the Advanced Peripheral Bus}
+\subsection{Securing the Advanced Peripheral Bus} \label{sec:Securing APB Bus}
 The AXI bus serves to connect the ARM processor with a variety of other components
 internal to the system, much like the PCI family of busses commonly found in laptops and
 desktops. However, most peripheral devices do not require the high rates of data transfer
@@ -157,7 +159,7 @@ for dynamic reassignment. One example of such logic is ARM's TrustZone Protectio
 Controller (TZPC) \cite{noauthor_arm_nodate}, although developers are also free to develop
 their own control system.
 
-\subsection{Securing the AXI Switch}
+\subsection{Securing the AXI Switch} \label{sec:Securing AXI Switch}
 The nature of the AXI protocol is such that any non-trivial set of bus devices will
 require the implementation of a routing mechanism to facilitate traffic flow. For Xilinx
 based systems, this mechanism is the AXI Interconnect, a Xilinx provided piece of IP. 
@@ -169,11 +171,12 @@ which offers identical capabilities as well as an interface with their Avalon st
 protocol. \cite{noauthor_intel_nodate}
 
 The TrustZone documentation does not outline specific treatment of these interconnect
-devices, however, research explored in sections III and IV below demonstrate that
-substantial vulnerabilities exist in this logic. As all bus traffic in the system must
-flow through this IP, it is imperative that it be adequately secured.
+devices, however, research explored in sections \ref{sec:TrustZone Research} and 
+\ref{sec:SoC Research} below demonstrates that substantial vulnerabilities exist in this 
+logic. As all bus traffic in the system must flow through this IP, it is imperative that 
+it be adequately secured.
 
-\subsection{Securing the System Memory}
+\subsection{Securing the System Memory} \label{sec:Securing Memory}
 While all of the above aspects of the system concern the security of either peripheral
 devices or other components likely located on the programmable logic (PL) side of the 
 system, the main memory is another aspect of the system that requires careful 
@@ -191,7 +194,7 @@ all modern devices. As the fundamental premise of caching is speed of access, th
 between security and ease of access is highly present in this aspect of the system's
 design. 
 
-\section{TrustZone Related Research in Embedded Systems}
+\section{TrustZone Related Research in Embedded Systems} \label{sec:TrustZone Research}
 The TrustZone Architecture has seen an explosion in popularity over the past several
 years, prompted partially by the maturation of the industry but also by ARM's release of 
 much of the previously protected details of the system's implementation into the public
@@ -199,7 +202,7 @@ domain. Accordingly, a diverse body of research surrounding the system has been 
 This research has revealed a number of vulnerabilities inherent in the platform,
 regardless of if it is implemented on a FPGA-based or traditional system.
 
-\subsection{Architectural Issues}
+\subsection{Architectural Issues} \label{sec:Architectural Issues}
 In \cite{cerdeira_sok_nodate}, Cerdeira et al. outline a number of issues that arise from
 the nature of the TrustZone architecture. One such concern is the less than ideal nature 
 of the isolation between worlds, both with regards to the ability of secure resources to
@@ -208,7 +211,7 @@ capabilities to be exploited to gain access to the contents of secure-world memo
 porous boundary between worlds is harnessed in many of the SoC specific attacks outlined
 later in this paper.
 
-\subsection{Implementational Issues}
+\subsection{Implementational Issues} \label{sec:Implementational Issues}
 A variety of sources, including \cite{cerdeira_sok_nodate}, \cite{benhani_security_2019},
 and \cite{benhani_security_2017} agree that a large percentage of the vulnerabilities
 introduced in the process of utilizing the TrustZone Architecture occur not solely due to
@@ -218,7 +221,7 @@ due to the complexity of a project of such a scale and the difficulties inherent
 successfully validating the numerous components of such a project, a trend which is once
 again shared with the FPGA development community.
 
-\subsection{Hardware Issues}
+\subsection{Hardware Issues} \label{sec:Hardware Issues}
 Another recently popular area of research is the threat posed by hardware vulnerabilities
 as they pertain to embedded systems. These threats come from a variety of sources. In some
 cases, the threat is posed as a result of the differing implementations of the same
@@ -233,7 +236,7 @@ information. As an example, \cite{masti_thermal_2015} outlines a strategy by whi
 fluctuation of the CPU temperature can be used as a means to exfiltrate data, which could
 certainly be used to transport secured data maliciously across the world boundary.
 
-\section{FPGA Related Research In Embedded Systems Security}
+\section{FPGA Related Research In Embedded Systems Security} \label{sec:FPGA Research}
 Extensive research has also been done with regards to the security of FPGA systems. In
 \cite{badrignans_security_2011}, researchers outline a number of attack vectors present in
 the FPGA development process, many of which involve the use of FPGAs as accelerated means
@@ -245,7 +248,8 @@ Covert side channel attacks are also of concern in FPGA devices, as
 parameters of the CPU does not apply in a processor-less system, there is a great deal of
 potential for the leakage of data between adjacent routes in the gate array.
 
-\section{TrustZone Related Research in FPGA-Based Embedded Systems}
+\section{TrustZone Related Research in FPGA-based Embedded Systems} 
+\label{sec:SoC Research}
 In addition to the various vulnerabilities inherent in the TrustZone architecture outlined
 above, the presence of a PL in a FPGA-based SoC introduces a number of
 additional concerns. As mentioned earlier, critically small amounts of research
@@ -254,26 +258,26 @@ these vulnerabilities in depth. These papers focus primarily on specific vulnera
 present in SoC systems, as opposed to the general discussion of the platform often found
 in references in the preceding section. Several such discussions are outlined below.
 
-\subsection{Attacks on the AXI Bus NS Bits}
+\subsection{Attacks on the AXI Bus NS Bits} \label{sec:NS attacks}
 The concept of the NS bits (Formally the AWPROT and ARPROT signals) as they relate to the
 AXI bus's overall security makes them an attractive target for compromise by actors 
 seeking to violate the integrity of the Secure World. As Benhani et al. demonstrate in 
 \cite{benhani_security_2019}, two potential objectives can be achieved through malicious 
 actions on these bits. By altering these bits such that they are no longer tied high 
 (which otherwise prevents access to the Secure World), it is possible for a non-secure 
-component to access Secure World Resources. Alternatively, by taking a previously variable
+component to access Secure World resources. Alternatively, by taking a previously variable
 set of NS bits (such as those present on a Secure World component) and tying them high, it
 is possible to implement a denial of service attack against that resource, impeding the 
 ability of the Secure World routines that utilize that component to do so.
 
 At first glance, a modification such as this seems infeasible, both due to the nature of
-the access required to implement them as well as the high likelihood of discovery that a
+the access required to implement it as well as the high likelihood of discovery that a
 suddenly nonfunctioning system component would imply. However, this is not necessarily the
-case. Such vulnerabilities could be exploited easily by either a "rogue designer" or,
+case. Such vulnerabilities could be exploited easily by either a ``rogue designer'' or,
 alternatively, by a compromised element of the build-chain. Furthermore, the nature of the
-modification is not necessarily such that a device consistently behaves in a manner that is
-indicative of the faulty configuration. Rather, the alteration of these signals could be
-accomplished by more complex logic, such that the component being attacked behaves as
+modification is not necessarily such that a device consistently behaves in a manner that 
+is indicative of the faulty configuration. Rather, the alteration of these signals could 
+be accomplished by more complex logic, such that the component being attacked behaves as
 originally intended except under a precise set of circumstances.
 
 This type of vulnerability has always been present in any kind of embedded system via a
@@ -284,7 +288,7 @@ many cases from within the system itself, makes the potential for the manipulati
 these signals much greater.
 
 
-\subsection{Attacks on the AXI Bus BRESP and RRESP Signals}
+\subsection{Attacks on the AXI Bus BRESP and RRESP Signals} \label{sec:RESP Attacks}
 As an alternative to the modification of the NS bits, Benhani et al. also present an
 attack vector that focuses on compromising the response signals BRESP and RRESP in 
 \cite{benhani_security_2019}. As one might recall, these signals are used to indicate to
@@ -300,7 +304,7 @@ However, the risk of a denial of service attack remains present. Additionally, i
 mentioning that the possibility of the malicious use of other logic to trigger such an
 exploit under specific circumstances is equally as valid here as it is in the NS attacks.
 
-\subsection{Attacks on the AXI Interconnect}
+\subsection{Attacks on the AXI Interconnect} \label{sec:AXI Interconnect Attacks}
 The AXI Interconnect (or Qsys interconnect for Intel/Altera FPGAs) is another prime target
 for exploitation, as all bus traffic across the entire system must pass through the
 crossbar as it flows from component to component. As all the signals (including the NS
@@ -315,17 +319,17 @@ and \cite{benhani_security_2019}. Such data could then be conceivably accessed b
 malicious non-secure IP core, or could even be extracted using a side channel attack such
 as those suggested in the literature \cite{bukasa_how_2018}.
 
-\subsection{Direct Memory Access Attacks}
+\subsection{Direct Memory Access Attacks} \label{sec:DMA Attacks}
 In \cite{gross_breaking_2019}, Gross et al. outline a number of potential attack vectors
 which focus on compromising secure elements of the system's main memory by means of 
-compromised hardware contained within the PL. As outlined in Section II, most of these
-details are manufacturer specific, and \cite{gross_breaking_2019} focuses heavily on
-Xilinx systems.
+compromised hardware contained within the PL. As outlined in Section \ref{sec:TrustZone}, 
+most of these details are manufacturer specific, and \cite{gross_breaking_2019} focuses 
+heavily on Xilinx systems.
 
 One particularly concerning vulnerability outlined in \cite{gross_breaking_2019} is the
 potential to enable the execution of malicious binaries in the Secure World PS by 
 compromising the mechanisms by which the Secure World verifies the integrity of its
-executables. By manipulating PL components (As outlined in the preceding subsections),
+executables. By manipulating PL components (as outlined in the preceding subsections),
 the researchers were able to isolate and extract the routine that provided this
 verification capability, and succeeded in modifying it such that it would always indicate
 that a routine had been verified. They then were able to redeploy it to the system, and
@@ -334,19 +338,19 @@ proceeded to demonstrate the execution of their own untrusted binary in the Secu
 The literature \cite{benhani_security_2019} outlines a similar memory vulnerability
 utilizing the ARM Accelerator Coherency Port (ACP) in conjunction with the TrustZone
 Components for configuring peripherals and memory. These devices, the TZPC outlined in 
-section II.B and the TrustZone Address Space Controller (TZASC) designate access to
-specific peripherals or 64 MB regions of memory, respectively. By manipulating the values
-in the TZASC, a malicious actor can declare a previously secure memory region non-secure,
-and then access the data contained therein from non-secure IP.
+section \ref{sec:Securing APB Bus} and the TrustZone Address Space Controller (TZASC) 
+designate access to specific peripherals or 64 MB regions of memory, respectively. By 
+manipulating the values in the TZASC, a malicious actor can declare a previously secure
+memory region non-secure, and then access the data contained therein from non-secure IP.
 
-\section{Vulnerability Mitigation Strategies}
+\section{Vulnerability Mitigation Strategies} \label{sec:Mitigation}
 Several of the works which outline the vulnerabilities discussed above also outline
 proposals for mitigating the risks posed by these vulnerabilities. Such mitigation
 strategies are discussed in the subsections below.
-\subsection{Predefinition of IP permissions}
+\subsection{Predefinition of IP permissions} \label{sec:IP Predefinition}
 Many of the above attacks rely on the ability to compromise the set of signals used to
 enforce world isolation on the AXI Bus. This system is particularly susceptible to
-compromise in FPGA-Based SoCs, owing to the ease with which the logical elements of the
+compromise in FPGA-based SoCs, owing to the ease with which the logical elements of the
 system can be dynamically modified. To this end, Gross et al. propose a novel strategy in
 \cite{gross_breaking_2019} - the definition of a security policy table for PL Bus Masters.
 In essence, this mitigation strategy seeks to define in a central location the status of
@@ -355,7 +359,7 @@ listing, they propose a firewall mechanism that can monitor the flow of traffic 
 that all devices are truthfully reporting their security status, either preventing or 
 reporting unprivileged escalation or denial of service attacks.
 
-\subsection{AXI Isolation}
+\subsection{AXI Isolation} \label{sec:AXI Isolation}
 Taking things a step beyond predefinition of permissions, the authors of 
 \cite{benhani_security_2017} propose a modification of the fundamental nature of the PS/PL
 interaction: the isolation of worlds by separate AXI Interconnect Logic, rather than a 
@@ -374,8 +378,8 @@ this will require a duplication of IP in the two worlds. In others, it will requ
 to perform additional work in order to transfer information between worlds so that all
 operations requiring secure IP can be done solely in the secure world.
 
-\subsection{Post Synthesis Design Verification}
-Another key vulnerability inherent in FPGA-Based devices is the extensive toolchain
+\subsection{Post Synthesis Design Verification} \label{sec:Verification}
+Another key vulnerability inherent in FPGA-based devices is the extensive toolchain
 required to design, synthesize, place, and program logic on the device. Because even very
 simple logic designs can spawn incomprehensible amounts of artifacts, it is often
 impractical to do a thorough review of all of said artifacts. This makes it possible for
@@ -389,15 +393,16 @@ feedback provided by the synthesis tools themselves, however such tools are blin
 nature of the code being compiled. This necessitates the use of a (not currently existent)
 external tool.
 
-\section{Avenues for Future Research in TrustZone Enabled Systems}
-As the implementation of this architecture on FPGA-Based SoCs is a relatively novel
+\section{Avenues for Future Research in TrustZone Enabled Systems} 
+\label{sec:Further Research}
+As the implementation of this architecture on FPGA-based SoCs is a relatively novel
 concept, numerous opportunities exist for further research to contribute to the body of
 knowledge currently existent on the topic. Several of the concepts outlined below are
 mentioned briefly in some of the existing works discussed previously, while others draw
-from contemporary work done in other similar fields that have applicability to the concerns
-outlined above.
+from contemporary work done in other similar fields that have applicability to the 
+concerns outlined above.
 
-\subsection{Cache Exploitation}
+\subsection{Cache Exploitation} \label{sec:Cache Exploitation}
 A substantial portion of the Direct Memory Access (DMA) vulnerability outlined in the 
 preceding sections is due to the nature of the relationship between the main memory and
 the cache. As these systems are tightly connected, and as lines of the cache are
@@ -407,7 +412,7 @@ Accordingly, further research on the behavior of the cache and the logic respons
 controlling it would be useful to provide clarity into the security of the cache when it
 is accessed not only by the PS but also by elements of the PL.
 
-\subsection{PL characterization and verification}
+\subsection{PL Characterization and Verification} \label{sec:PL Characterization}
 The majority of the vulnerabilities discussed herein are centered around the ability of
 the programmable logic to be dynamically modified, allowing for the insertion of hardware
 trojans. In many other fields, the concept of Physical Unclonable Functions (PUFs) have
@@ -418,7 +423,7 @@ signatures) but also the hardware logic associated with a bus device. This would
 prevent malicious actors from modifying the PL in order to manipulate entry into the
 secure world.
 
-\section{Conclusion}
+\section{Conclusion} \label{sec:Conclusion}
 Despite its lack of adequate consideration in the rapid paced process that often 
 characterizes embedded systems, security is an essential component in any system design.
 When motivations exist such that a developer deems it necessary that a platform such as
@@ -427,7 +432,7 @@ a system, the need for careful consideration of vulnerabilities is even greater.
 
 Although the TrustZone platform has been widely implemented in a variety of embedded
 systems and is known for its robust suite of security countermeasures, the introduction of
-the system into an FPGA-Based Embedded System introduces a considerable set of additional
+the system into an FPGA-based Embedded System introduces a considerable set of additional
 vulnerabilities which must be carefully evaluated to ensure that the nature of this
 programmable logic does not defeat the security the platform provides. As such a synthesis
 is a relatively novel field, the body of work presently existing on such a system is
@@ -436,14 +441,16 @@ and need to be cognizant of the vulnerabilities outlined herein, as well as the 
 for additional, as of yet unknown vulnerabilities.
 
 Developers should be reassured that mitigation strategies have been proposed for several
-of the critical concerns discovered to data, as outlined in section VI above. However,
-such mitigation strategies have nontrivial consequences on the performance of the system,
-and their implementation requires a careful analysis of the risk posed by the
-vulnerability and the extent of impact the mitigation strategy will cause. It is the hop
-of both the author and the research community at large that further work will be effective
-in outlining further solutions that are both highly effective and minimally impactful to
-the normal operation of TrustZone FPGA-Based Embedded Systems.
+of the critical concerns discovered to data, as outlined in section \ref{sec:Mitigation}
+above. However, such mitigation strategies have nontrivial consequences on the performance
+of the system, and their implementation requires a careful analysis of the risk posed by 
+the vulnerability and the extent of impact the mitigation strategy will cause. It is the 
+hope of both the author and the research community at large that further work will be 
+effective in outlining further solutions that are both highly effective and minimally 
+impactful to the normal operation of TrustZone FPGA-based Embedded Systems.
+
 \section*{Acknowledgment}
+\addcontentsline{toc}{section}{Acknowledgment}
 The author would like to thank Dr. Xiaofang Wang, Villanova University, for her support in
 the authoring of this paper.
 
@@ -451,6 +458,7 @@ the authoring of this paper.
 
 \bibliography{ZoteroExport}
 
+%shrink space between bibliography and biography
 \vskip 0pt plus -1fil
 \begin{IEEEbiography}[{
 	\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{sdonchez}}]
