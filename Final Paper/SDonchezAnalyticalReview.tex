@@ -17,6 +17,12 @@
 %declare extensions so they don't need to be explicitly defined
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
 
+%fix handling of long URLs in citations
+\usepackage[hyphens]{url}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{breaklinks=true}
+\urlstyle{same}
+
 \begin{document}
 
 \title{ARM TrustZone in an SOC Environment}
@@ -87,8 +93,14 @@ additional complexities introduced by using the platform in combination with a F
 SoC. Section II provides an explanation of the principles governing the operation of the 
 TrustZone platform itself. Section III and IV discusses the state of current research on
 the effective implementation of the ARM TrustZone into FPGA-based Embedded Systems, while 
-sections V and VI discuss potential avenues for further research. Section VII concludes 
+sections V discusses potential avenues for further research. Section VI concludes 
 the paper.
+
+\subsection{A Comment on the State of the Industry}
+Serious consideration of security in FPGA-based Embedded Systems is a novel field for
+research. There are surprisingly few scholarly articles regarding this field, from an even
+smaller pool of researchers. Accordingly, this paper will dar extensively from other works
+on the TrustZone Architecture, many of which may not directly concern FPGA-based devices.
 
 \section{Details of the TrustZone platform}
 ARM's TrustZone technology exists to facilitate a Trusted Excecution Environment (TEE), in
@@ -112,10 +124,10 @@ compatability with pre-existing devices.
 The principle means of enforcing isolation on the AXI (system) bus is through a pair of
 bits contained in the extended bus protocol. These bits are termed the Non-Secure (or NS)
 bits, and one is dedicated to indicating the status of read operations, while the other is
-reserved for write operations.\cite{benhani_security_2019} In the case of a non-secure bus master, these bits are 
-permanently hardwired high, thereby preventing access to any secure world resources.
-Meanwhile, secure world bus masters drive these lines using internal logic, allowing them
-access to both secure and nonsecure resources.
+reserved for write operations.\cite{benhani_security_2019} In the case of a non-secure bus
+ master, these bits are permanently hardwired high, thereby preventing access to any 
+ secure world resources. Meanwhile, secure world bus masters drive these lines using 
+ internal logic, allowing them access to both secure and nonsecure resources.
 
 Attempts to access secure world resources by a non-secure master result in a failure mode
 that is implementation dependent. The sytem can either allow the request to fail silently
@@ -142,7 +154,8 @@ The bridge features a set of one-bit input signals, one per peripheral, used to 
 their respective security states. These signals can either be tied statically to limit
 the peripheral to one world or the other, or can be driven by some other logic to allow
 for dynamic reassignment. One example of such logic is ARM's TrustZone Protection 
-Controller (TZPC) \cite{noauthor_arm_nodate}, although developers are also free to develop their own control system.
+Controller (TZPC) \cite{noauthor_arm_nodate}, although developers are also free to develop
+their own control system.
 
 \subsection{Securing the AXI Switch}
 The nature of the AXI protocol is such that any non-trivial set of bus devices will
@@ -160,11 +173,126 @@ devices, however research explored in sections III and IV below demonstrate that
 substantial vulnerabilities exist in this logic. As all bus traffic in the system must
 flow through this IP, it is imperative that it be adequately secured.
 
+\subsection{Securing the System Memory}
+While all of the above aspects of the system concern the security of either peripheral
+devices or other components likely located on the programmable logic (PL) side of the 
+system, the main memory is another aspect of the system that requires careful 
+consideration. Although the main memory is accessed via the AXI bus the same way any other
+system component is reached, it is unique in that it contains both secure and non-secure
+elements.
+
+Like the AXI Interconnect, the implementation of the Memory Management Unit (MMU) is
+manufacturer specific. However, both Intel/Altera and Xilinx's offerings provide
+compatability with the TrustZone concept of NS bits, and verify security status as well as
+the observance of traditional process isolation. \cite{gross_breaking_2019}
+
+Additionally, the memory is heavily integrated into the caching system present in almost
+all modern devices. As the fundamental premise of caching is speed of access, the tradeoff
+between security and ease of access is highly present in this aspect of the system's
+design. 
+
 \section{Related Research in Embedded Systems}
 
 \section{Related Research in FPGA-Based Embedded Systems}
+In addition to the various vulnerabilities inherent in the TrustZone architecture outlined
+above, the presence of a PL in a FPGA-based SoC introduces a number of
+additional concerns. As mentioned earlier, critically small amounts of research
+have been conducted in this field, however several papers have been presented that discuss
+these vulnerabilities in depth. These papers focus primarily on specific vulnerabilities
+present in SoC systems, such as those outlined below.
+
+\subsection{Attacks on the AXI Bus NS Bits}
+The concept of the NS bits (Formally the AWPROT and ARPROT signals) as they relate to the
+AXI bus's overall security makes them an attractive target for compromise by actors 
+seeking to violate the integrity of the Secure World. As Benhani et al. demonstrate in 
+\cite{benhani_security_2019}, two potentia objectives can be achieved through malicious 
+actions on these bits. By altering these bits such that they are no longer tied high 
+(which otherwise prevents access to the Secure World), it is possible for a non-secure 
+component to access Secure World Resources. Alternatively, by taking a previously variable
+set of NS bits (such as those present on a Secure World component) and tying them high, it
+is possible to implement a denial of service attack against that resource, impeding the 
+ability of the Secure World routines that utilize that component to do so.
+
+At first glance, a modification such as this seems infeasible, both due to the nature of
+the access required to implement them as well as the high likelihood of discovery that a
+suddenly nonfunctioning system component would imply. However, this is not necessarily the
+case. Such vulnerabilities could be exploited easily by either a "rogue designer" or,
+alternatively, by a compromised element of the buildchain. Furthermore, the nature of the
+modification is not necessarily such that a device consistenyl behaves in a manner that is
+indicative of the faulty configuration. Rather, the alteration of these signals could be
+acomplished by more complex logic, such that the component being attacked behaves as
+originally intended except under a precise set of circumstances.
+
+This type of vulnerability has always been present in any kind of embedded system via a
+compromised manufacturing process or inadequate supply chain security. Any of these
+scenarios could allow for the introduction of a hardware trojan, such as is outlined in
+\cite{bhunia_hardware_2014}. However, the presence of logic that can be reprogrammed, in
+many cases from within the system itself, makes the potential for the manipulation of
+these signals much greater.
+
+
+\subsection{Attacks on the AXI Bus BRESP and RRESP Signals}
+As an alternative to the modification of the NS bits, Benhani et al. also present an
+attack vector that focuses on compromising the response signals BRESP and RRESP in 
+\cite{benhani_security_2019}. As one might recall, these signals are used to indicate to
+the requesting device (the Bus Master) if communication between the two devices is
+permitted based on the NS Bit parameters and the nature of the slave device. Therefore, it
+is conceivable that these response signals could be altered instead of the inputs to the
+verification process. 
+
+The risk of data leakage posed by the return of a false positive on these signals is
+somewhat less prominent than in the case of modification of the NS bits, as it would
+require the master to make an erroneous request that would normally result in an error. 
+However, the risk of a denial of service attack remains present. Additionally, it is worth
+mentioning that the poossibility of the malicious use of other logic to trigger such an
+exploit under specific circumstances is equally as valid here as it is in the NS attacks.
+
+\subsection{Attacks on the AXI Interconnect}
+The AXI Interconnect (or Qsys interconnect for Intel/Altera FPGAs) is another prime target
+for exploitation, as all bus traffic across the entire system must pass through the
+crossbar as it flows from component to component. As all the signals (including the NS
+bits and the response signals) must also flow through the crossbar, this represents
+another potential means of modifying these bits to achieve the effects described above.
+
+However, there is another, potentially more concerning avenue for compromise in the
+interconnect logic. As opposed to a Denial of Service style attack, it is possible for a
+malicious actor to implement a Man-in-the-Middle (MitM) attack by inserting a First In
+First Out (FIFO) Queue into the crossbar, as is described in \cite{benhani_security_2017}
+and \cite{benhani_security_2019}. Such data could then be conceivably accessed by a
+malicious non-secure IP core, or could even be extracted using a side channel attack such
+as those suggested in the literature \cite{bukasa_how_2018}.
+
+\subsection{Direct Memory Access Attacks}
+In \cite{gross_breaking_2019}, Gross et al. outline a number of potential attack vectors
+which focus on compromising secure elements of the system's main memory by means of 
+compromised hardware contained within the PL. As outlined in Section II,most of these
+details are manufacturer specific, and \cite{gross_breaking_2019} focuses heavily on
+Xilinx systems.
+
+One particularly concerning vulnerability outlined in \cite{gross_breaking_2019} is the
+potential to enable the execution of malicious binaries in the Secure World PS by 
+compromising the mechanisms by which the Secure World verifies the integrity of its
+executables. By manipulating PL components (As outlined in the preceding subsections),
+the researchers were able to isolate and extract the routine that provided this
+verification capability, and succeeded in modifying it such that it would always indicate
+that a routine had been verified.They then were able to redeploy it to the system, and
+proceeded to demonstrate the execution of their own untrusted binary in the Secure World.
+
+The literature \cite{benhani_security_2019} outlines a similar memory vulnerability
+utilizing the ARM Accelerator Coherency Port (ACP) in conjunction with the TrustZone
+Components for configuring peripherals and memory. These devices, the TZPC outlined in 
+section II.B and the TrustZone Address Space Controller (TZASC) designate access to
+specific peripherals or 64 MB regions of memory, respectively. By manipulating the values
+in the TZASC, a malicious actor can declare a previously secure memory region non-secure,
+and then access the data contained therein from non-secure IP.
 
 \section{Avenues for Future Research in TrustZone Enabled Systems}
+%APB Exploitation
+%Cache Exploitation
+%Predefinition of IP permissions
+%PL characterization and verification
+%design time verification/signing
+
 
 \section{Conclusion}
 The conclusion goes here.
