@@ -295,3 +295,64 @@
 	pages = {1229--1247},
 	file = {IEEE Xplore Abstract Record:C\:\\Users\\sgdon\\Zotero\\storage\\AGSHHSD8\\6856140.html:text/html;IEEE Xplore Full Text PDF:C\:\\Users\\sgdon\\Zotero\\storage\\32B6REFX\\Bhunia et al. - 2014 - Hardware Trojan Attacks Threat Analysis and Count.pdf:application/pdf}
 }
+
+@article{li_research_2019,
+	title = {Research on {ARM} {TrustZone}},
+	volume = {22},
+	issn = {2375-0529},
+	url = {https://doi.org/10.1145/3308755.3308761},
+	doi = {10.1145/3308755.3308761},
+	abstract = {ARM TrustZone [1] is a hardware-based security feature that can provide software with a high-privilege and isolated execution environment. Such isolation is ensured by hardware, which is usually considered as more trustworthy than software. Thus the execution environment is also known as trusted execution environment (TEE). TrustZone technology was proposed in 2002, but did not get widely used until 2009, when Apple released iPhone 5s. In iPhone 5s, Apple leveraged TrustZone to protect its Touch ID, which ensures that even if the iOS is fully compromised, the user's fingerprint data can still be safe. In 2017, Google made TEE a mandatory requirement on any Android devices with a fingerprint scanner. Nowadays, almost all mobile phones and tablets have TEE deployed. Meanwhile, ARM integrates TrustZone in ARM64 and ARMv8-M to support a broader range of platforms including servers and IoT devices.},
+	number = {3},
+	urldate = {2020-05-06},
+	journal = {GetMobile: Mobile Computing and Communications},
+	author = {Li, Wenhao and Xia, Yubin and Chen, Haibo},
+	month = jan,
+	year = {2019},
+	pages = {17--22},
+	file = {Full Text PDF:C\:\\Users\\sgdon\\Zotero\\storage\\3NH76Y5T\\Li et al. - 2019 - Research on ARM TrustZone.pdf:application/pdf}
+}
+
+@article{cerdeira_sok_nodate,
+	title = {{SoK}: {Understanding} the {Prevailing} {Security} {Vulnerabilities} in {TrustZone}-assisted {TEE} {Systems}},
+	abstract = {Hundreds of millions of mobile devices worldwide rely on Trusted Execution Environments (TEEs) built with Arm TrustZone for the protection of security-critical applications (e.g., DRM) and operating system (OS) components (e.g., Android keystore). TEEs are often assumed to be highly secure; however, over the past years, TEEs have been successfully attacked multiple times, with highly damaging impact across various platforms. Unfortunately, these attacks have been possible by the presence of security ﬂaws in TEE systems. In this paper, we aim to understand which types of vulnerabilities and limitations affect existing TrustZone-assisted TEE systems, what are the main challenges to build them correctly, and what contributions can be borrowed from the research community to overcome them. To this end, we present a security analysis of popular TrustZone-assisted TEE systems (targeting Cortex-A processors) developed by Qualcomm, Trustonic, Huawei, Nvidia, and Linaro. By studying publicly documented exploits and vulnerabilities as well as by reverse engineering the TEE ﬁrmware, we identiﬁed several critical vulnerabilities across existing systems which makes it legitimate to raise reasonable concerns about the security of commercial TEE implementations.},
+	language = {en},
+	author = {Cerdeira, David and Santos, Nuno and Fonseca, Pedro and Pinto, Sandro},
+	pages = {17},
+	file = {Cerdeira et al. - SoK Understanding the Prevailing Security Vulnera.pdf:C\:\\Users\\sgdon\\Zotero\\storage\\XWP9HJS8\\Cerdeira et al. - SoK Understanding the Prevailing Security Vulnera.pdf:application/pdf}
+}
+
+@inproceedings{masti_thermal_2015,
+	address = {Washington, D.C.},
+	series = {{SEC}'15},
+	title = {Thermal covert channels on multi-core platforms},
+	isbn = {978-1-931971-23-2},
+	abstract = {Side channels remain a challenge to information flow control and security in modern computing platforms. Resource partitioning techniques that minimise the number of shared resources among processes are often used to address this challenge. In this work, we focus on multicore platforms and we demonstrate that even seemingly strong isolation techniques based on dedicated cores can be circumvented through the use of thermal channels. Specifically, we show that the processor core temperature can be used both as a side channel as well as a covert communication channel even when the system implements strong spatial and temporal partitioning. Our experiments on an Intel Xeon server platform demonstrate covert thermal channels that achieve up to 12.5 bps and weak thermal side channels that can detect processes executed on neighbouring cores. This work therefore shows a limitation in the isolation that can be achieved on existing multi-core systems.},
+	urldate = {2020-05-06},
+	booktitle = {Proceedings of the 24th {USENIX} {Conference} on {Security} {Symposium}},
+	publisher = {USENIX Association},
+	author = {Masti, Ramya Jayaram and Rai, Devendra and Ranganathan, Aanjhan and Müller, Christian and Thiele, Lothar and Capkun, Srdjan},
+	month = aug,
+	year = {2015},
+	pages = {865--880}
+}
+
+@inproceedings{giechaskiel_leaky_2018,
+	address = {Incheon, Republic of Korea},
+	series = {{ASIACCS} '18},
+	title = {Leaky {Wires}: {Information} {Leakage} and {Covert} {Communication} {Between} {FPGA} {Long} {Wires}},
+	isbn = {978-1-4503-5576-6},
+	shorttitle = {Leaky {Wires}},
+	url = {https://doi.org/10.1145/3196494.3196518},
+	doi = {10.1145/3196494.3196518},
+	abstract = {Field-Programmable Gate Arrays (FPGAs) are integrated circuits that implement reconfigurable hardware. They are used in modern systems, creating specialized, highly-optimized integrated circuits without the need to design and manufacture dedicated chips. As the capacity of FPGAs grows, it is increasingly common for designers to incorporate implementations of algorithms and protocols from a range of third-party sources. The monolithic nature of FPGAs means that all on-chip circuits, including third party black-box designs, must share common on-chip infrastructure, such as routing resources. In this paper, we observe that a "long" routing wire carrying a logical 1 reduces the propagation delay of other adjacent but unconnected long wires in the FPGA interconnect, thereby leaking information about its state. We exploit this effect and propose a communication channel that can be used for both covert transmissions between circuits, and for exfiltration of secrets from the chip. We show that the effect is measurable for both static and dynamic signals, and that it can be detected using very small on-board circuits. In our prototype, we are able to correctly infer the logical state of an adjacent long wire over 99\% of the time, even without error correction, and for signals that are maintained for as little as 82us. Using a Manchester encoding scheme, our channel bandwidth is as high as 6kbps. We characterize the channel in detail and show that it is measurable even when multiple competing circuits are present and can be replicated on different generations and families of Xilinx devices (Virtex 5, Virtex 6, and Artix 7). Finally, we propose countermeasures that can be deployed by systems and tools designers to reduce the impact of this information leakage.},
+	urldate = {2020-05-06},
+	booktitle = {Proceedings of the 2018 on {Asia} {Conference} on {Computer} and {Communications} {Security}},
+	publisher = {Association for Computing Machinery},
+	author = {Giechaskiel, Ilias and Rasmussen, Kasper B. and Eguro, Ken},
+	month = may,
+	year = {2018},
+	keywords = {crosstalk, fpga covert channel, information leakage, long wire delay},
+	pages = {15--27},
+	file = {Full Text PDF:C\:\\Users\\sgdon\\Zotero\\storage\\SKQQMHX7\\Giechaskiel et al. - 2018 - Leaky Wires Information Leakage and Covert Commun.pdf:application/pdf}
+}

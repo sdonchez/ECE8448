@@ -87,15 +87,15 @@ result in a device that performs as expected but presents additional avenues for
 exploitation.
 
 \subsection{Structure of the Paper}
-This paper is structured into 7 major sections. The introduction in Section I seeks to
+This paper is structured into 8 major sections. The introduction in Section I seeks to
 provide essential context as to the purpose of the ARM TrustZone platform, as well as the 
 additional complexities introduced by using the platform in combination with a FPGA based 
 SoC. Section II provides an explanation of the principles governing the operation of the 
-TrustZone platform itself. Section III and IV discusses the state of current research on
+TrustZone platform itself. Section III, IV, and V discusses the state of current research on
 the vulnerabilities related to the implementation of the ARM TrustZone into both 
-traditional and FPGA-based Embedded Systems, while Section V describes mitigation
-strategies outlined in this research. Section VI discusses potential avenues for further 
-research. Section VI concludes the paper.
+traditional and FPGA-based Embedded Systems, while Section VI describes mitigation
+strategies outlined in this research. Section VII discusses potential avenues for further 
+research. Section VII concludes the paper.
 
 \subsection{A Comment on the State of the Industry}
 Serious consideration of security in FPGA-based Embedded Systems is a novel field for
@@ -192,7 +192,7 @@ all modern devices. As the fundamental premise of caching is speed of access, th
 between security and ease of access is highly present in this aspect of the system's
 design. 
 
-\section{Related Research in Embedded Systems}
+\section{TrustZone Related Research in Embedded Systems}
 The TrustZone Architecture has seen an explosion in popularity over the past several
 years, prompted partially by the maturation of the industry but also by ARM's release of 
 much of the previously protected details of the system's implementation into the public
@@ -201,11 +201,52 @@ This research has revealed a number of vulnerabilities inherent in the platform,
 regardless of if it is implemented on a FPGA-based or traditional system.
 
 \subsection{Architectural Issues}
+In \cite{cerdeira_sok_nodate}, Cerdeira et al. outline a number of issues that arise from
+the nature of the TrustZone architecture. One such concern is the less than ideal nature 
+of the isolation between worlds, both with regards to the ability of secure resources to
+access (and thereby modify) non-secure resources, as well as the capacity for debugging
+capabilities to be exploited to gain access to the contents of secure-world memory. This
+porous boundary between worlds is harnessed in many of the SoC specific attacks outlined
+later in this paper.
 
 \subsection{Implementational Issues}
-\subsection{Hardware Issues}
+A variety of sources, including \cite{cerdeira_sok_nodate}, \cite{benhani_security_2019},
+and \cite{benhani_security_2017} agree that a large percentage of the vulnerabilities
+introduced in the process of utilizing the TrustZone Architecture ocurr not solely due to
+architectural issues such as those defined above, but also as a result of imperfect
+implementation on the part of the device developer. Many of these vulnerabilities arise
+due to the complexity of a project of such a scale and the difficulties inherent in
+successfully validating the numerous components of such a project, a trend which is once
+again shared with the FPGA development community.
 
-\section{Related Research in FPGA-Based Embedded Systems}
+\subsection{Hardware Issues}
+Another recently popular area of research is the threat posed by hardware vulnerabilities
+as they pertain to embedded systems. These threats come from a variety of sources. In some
+cases, the threat is posed as a result of the differing implementations of the same
+functionality by different manufacturers. For example, each manufacturer is free to 
+implement their own method of routing within the AXI network of a system, and nuances in
+such designs could expose vulnerabilities that were previously undiscovered.
+
+Additionally, there has been increasing interest in the use of covert side-channels to
+exfiltrate maliciously obtained information from a system. These covert side-channels make
+use of the intrinsic nature of the hardware devices in a system in order to encode
+information. As an example, \cite{masti_thermal_2015} outlines a strategy by which the
+fluctuation of the CPU temperature can be used as a means to exfiltrate data, which could
+certainly be used to transport secured data maliciously across the world boundary.
+
+\section{FPGA Related Research In Embedded Systems Security}
+Extensive research has also been done with regards to the security of FPGA systems. In
+\cite{badrignans_security_2011}, researchers outline a number of attack vectors present in
+the FPGA development process, many of which involve the use of FPGAs as accelerated means
+of handling data encryption and decryption. As this is a common use of FPGAs in SoC
+environments, such vulnerabilities are of real concern. 
+
+Covert side channel attacks are also of concern in FPGA devices, as 
+\cite{giechaskiel_leaky_2018} explores. While the concept of modifying the operating
+parameters of the CPU doesn't apply in a processor-less system, there is a great deal of
+potential for the leakage of data between adjacent routes in the gate array.
+
+\section{TrustZone Related Research in FPGA-Based Embedded Systems}
 In addition to the various vulnerabilities inherent in the TrustZone architecture outlined
 above, the presence of a PL in a FPGA-based SoC introduces a number of
 additional concerns. As mentioned earlier, critically small amounts of research
@@ -379,8 +420,30 @@ prevent malicious actors from modifying the PL in order to manipulate entry into
 secure world.
 
 \section{Conclusion}
-The conclusion goes here.
+Despite its lack of adequate consideration in the rapid paced process that often 
+characterizes embedded systems, security is an essential component in any system design.
+When motivations exist such that a developer deems it necessary that a platform such as
+ARM's TrustZone architecture be implemented to enhance the security functionality of such
+a system, the need for careful consideration of vulnerabilities is even greater.
 
+Although the TrustZone platform has been widely implemented in a variety of embedded
+systems and is known for its robust suite of security countermeasures, the introduction of
+the system into an FPGA-Based Embedded System introduces a considerable set of additional
+vulnerabilities which must be carefully evaluated to ensure that the nature of this
+programmable logic does not defeat the security the platform provides. As such a synthesis
+is a realtively novel field, the body of work presently existing on such a system is
+minimal. Accordingly, developers should proceed with care in implementing such a system,
+and need to be congnizant of the vulnerabilities outlined herein, as well as the potential
+for additional, as of yet unknown vulnerabilities.
+
+Developers should be reassured that mitigation strategies have been proposed for several
+of the critical concerns discovered to data, as outlined in section VI above. However,
+such mitigation strategies have nontrivial consequences on the performance of the system,
+and their implementation requires a careful analysis of the risk posed by the
+vulnerability and the extent of impact the mitigation strategy will cause. It is the hop
+of both the author and the research community at large that further work will be effective
+in outlining further solutions that are both highly effective and minimally impactful to
+the normal operation of TrustZone FPGA-Based Embedded Systems.
 \section*{Acknowledgment}
 The author would like to thank Dr. Xiaofang Wang, Villanova University, for her support in
 the authoring of this paper.
