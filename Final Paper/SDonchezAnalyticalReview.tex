@@ -7,22 +7,21 @@
 
 \documentclass[journal]{IEEEtran}
 
+% enable citations
 \usepackage{cite}
 
+% enable graphics
 \usepackage[pdftex]{graphicx}
-\graphicspath{{../pdf/}{../jpeg/}}
-\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-\usepackage{amsmath}
-\interdisplaylinepenalty=2500
-% correct bad hyphenation here
-\hyphenation{op-tical net-works semi-conduc-tor}
-
+%declare graphics location
+\graphicspath{{./jpeg/}}
+%declare extensions so they don't need to be explicitly defined
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg}
 
 \begin{document}
 
 \title{ARM TrustZone in an SOC Environment}
 
-\author{Stephen~Donchez,~\IEEEmembership{Member,~IEEE,}%
+\author{Stephen~Donchez,~\IEEEmembership{Member,~IEEE}%
 \thanks{S. Donchez is with Villanova University, Villanova, PA 19085 USA 
 \mbox{e-mail:sdonchez@villanova.edu}}%
 \thanks{Manuscript received May 6, 2020}}%
@@ -92,6 +91,74 @@ sections V and VI discuss potential avenues for further research. Section VII co
 the paper.
 
 \section{Details of the TrustZone platform}
+ARM's TrustZone technology exists to facilitate a Trusted Excecution Environment (TEE), in
+order to enable the execution of "sensitive" tasks in such a way that maintains their
+integrity without imposing massive constraints on system design. It facilitates this TEE
+by means of partitioning the Processing System (PS) into two distinct "worlds" - the
+secure world and the normal (interchangably referred to as non-secure) world. The
+technology then polices access to secure world resources to ensure that non-secure tasks
+aren't making erroneous (or malicious) accesses to secure world resources. This is
+acomplished by the system's "Monitor Mode", which performs context switches between worlds
+while also verifying access permissions and the validity of secure-world directed requests.
+
+\subsection{Securing the AXI Bus}
+TrustZone extends the concept of worlds beyond the PS and into peripherals,
+via an extension to the AMBA3 Advanced eXtensible Interface (AXI) bus protocol. This
+ensures that non-secure bus masters don't have access to secure slaves, while enabling
+secure masters to access both secure and non-secure slave devices. Furthermore, this is
+accomplished without requiring any modifications to the peripherals themselves, enabling
+compatability with pre-existing devices.
+
+The principle means of enforcing isolation on the AXI (system) bus is through a pair of
+bits contained in the extended bus protocol. These bits are termed the Non-Secure (or NS)
+bits, and one is dedicated to indicating the status of read operations, while the other is
+reserved for write operations.\cite{benhani_security_2019} In the case of a non-secure bus master, these bits are 
+permanently hardwired high, thereby preventing access to any secure world resources.
+Meanwhile, secure world bus masters drive these lines using internal logic, allowing them
+access to both secure and nonsecure resources.
+
+Attempts to access secure world resources by a non-secure master result in a failure mode
+that is implementation dependent. The sytem can either allow the request to fail silently
+or can raise one of two errors: a slave error or a decode error. These errors are raised
+on the BRESP (write) and RRESP (read) response signals, another crucial part of the 
+TrustZone's AXI controls. \cite{benhani_security_2017}
+
+\subsection{Securing the Advanced Peripheral Bus}
+The AXI bus serves to connect the ARM processor with a variety of other components
+internal to the system, much like the PCI family of busses commonly found in laptops and
+desktops. However, most peripheral devices do not require the high rates of data transfer
+(and the correspondingly stringent constraints) of the AXI specification. Instead, these
+peripherals reside on the Advanced Peripheral Bus (APB), and are interfaced with the rest
+of the system via the AXI-APB bridge.\cite{noauthor_arm_nodate}
+
+As peripherals are often outside the scope of the designer's control, backwards
+compatability is an impoerant factor in system design. Therefore, the APB specifications
+do not allow for the implementation of an equivalent mechanism to the NS bit, as any such
+implementation would not be compatible with prior versions of the AMBA protocol. To 
+mitigate this, the TrustZone architecture allocates responsibility for security
+enforcement of APB peripherals to the AXI-APB bridge itself.
+
+The bridge features a set of one-bit input signals, one per peripheral, used to indicate
+their respective security states. These signals can either be tied statically to limit
+the peripheral to one world or the other, or can be driven by some other logic to allow
+for dynamic reassignment. One example of such logic is ARM's TrustZone Protection 
+Controller (TZPC) \cite{noauthor_arm_nodate}, although developers are also free to develop their own control system.
+
+\subsection{Securing the AXI Switch}
+The nature of the AXI protocol is such that any non-trivial set of bus devices will
+require the implementation of a routing mechanism to facilitate traffic flow. For Xilinx
+based systems, this mechanism is the AXI Interconnect, a Xilinx provided piece of IP. 
+\cite{noauthor_axi_2017} The interconnect provides a crossbar switch to enable routing 
+between multiple masters, as well as a host of converters to handle different 
+implementations of the protocol (data widths, clock speed, protocol versions, etc.). 
+Altera offers a similar piece of IP, the Platform Designer (formerly Qsys) Interconnect,
+which offers identical capabilities as well as an interface with their Avalon streaming
+protocol. \cite{noauthor_intel_nodate}
+
+The TrustZone documentation does not outline specific treatment of these interconnect
+devices, however research explored in sections III and IV below demonstrate that
+substantial vulnerabilities exist in this logic. As all bus traffic in the system must
+flow through this IP, it is imperative that it be adequately secured.
 
 \section{Related Research in Embedded Systems}
 
@@ -103,26 +170,15 @@ the paper.
 The conclusion goes here.
 
 \section*{Acknowledgment}
-
-
-The authors would like to thank...
+The author would like to thank Dr. Xiaofang Wang, Villanova University, for her support in
+the authoring of this paper.
 
 \bibliographystyle{IEEEtran}
 
 \bibliography{ZoteroExport}
-
-% biography section
-% 
-% If you have an EPS/PDF photo (graphicx package needed) extra braces are
-% needed around the contents of the optional argument to biography to prevent
-% the LaTeX parser from getting confused when it sees the complicated
-% \includegraphics command within an optional argument. (You could create
-% your own custom macro containing the \includegraphics command to make things
-% simpler here.)
-%\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
-% or if you just want to reserve a space for a photo:
-
-\begin{IEEEbiography}{Stephen Donchez}
+\begin{IEEEbiography}[{
+	\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{sdonchez}}]
+	{Stephen Donchez}
 (M'20) was born in Bethlehem, PA, USA in 1998. He anticipates receiving his B.S. in
 computer engineering from Villanova University, Villanova, PA in 2020.
 
@@ -131,6 +187,8 @@ In the summer of 2018 he was a software engineering intern at Harris Coroporatio
 systems engineering intern, and anticpates returning to the same position for the summer
 of 2020 at their facility in Clifton, NJ. His research interests include FPGAs, embedded
 software development, and embedded systems with a focus on System-on-a-Chip technologies.
+
+Mr. Donchez is a student member of the IEEE.
 \end{IEEEbiography}
 
 \end{document}
