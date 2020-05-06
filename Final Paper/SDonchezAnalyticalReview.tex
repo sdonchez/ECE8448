@@ -1,4 +1,3 @@
-
 %% SDonchezAnalyticalReview.tex
 %% Stephen Donchez
 %% Dr. Wang
@@ -81,8 +80,8 @@ intellectual property (IP), for abstracting much of the intricacies of these com
 systems. The presence of this IP brings with it a host of potential security concerns,
 both as a result of maliciously compromised IP and also defects in otherwise genuine IP 
 that may expose the larger system to exploitation. Furthermore, the nature of the FPGA
-development process is heavily automated by a complex buildchain not dissimilar to a
-compiler. This poses another avenue for attack - compromised buildchain software could
+development process is heavily automated by a complex build-chain not dissimilar to a
+compiler. This poses another avenue for attack - compromised build-chain software could
 result in a device that performs as expected but presents additional avenues for
 exploitation.
 
@@ -111,16 +110,16 @@ by means of partitioning the Processing System (PS) into two distinct "worlds" -
 secure world and the normal (interchangably referred to as non-secure) world. The
 technology then polices access to secure world resources to ensure that non-secure tasks
 aren't making erroneous (or malicious) accesses to secure world resources. This is
-acomplished by the system's "Monitor Mode", which performs context switches between worlds
+accomplished by the system's "Monitor Mode", which performs context switches between worlds
 while also verifying access permissions and the validity of secure-world directed requests.
 
 \subsection{Securing the AXI Bus}
 TrustZone extends the concept of worlds beyond the PS and into peripherals,
 via an extension to the AMBA3 Advanced eXtensible Interface (AXI) bus protocol. This
-ensures that non-secure bus masters don't have access to secure slaves, while enabling
+ensures that non-secure bus masters do not have access to secure slaves, while enabling
 secure masters to access both secure and non-secure slave devices. Furthermore, this is
 accomplished without requiring any modifications to the peripherals themselves, enabling
-compatability with pre-existing devices.
+compatibility with pre-existing devices.
 
 The principle means of enforcing isolation on the AXI (system) bus is through a pair of
 bits contained in the extended bus protocol. These bits are termed the Non-Secure (or NS)
@@ -131,7 +130,7 @@ secure world resources. Meanwhile, secure world bus masters drive these lines us
 internal logic, allowing them access to both secure and nonsecure resources.
 
 Attempts to access secure world resources by a non-secure master result in a failure mode
-that is implementation dependent. The sytem can either allow the request to fail silently
+that is implementation dependent. The system can either allow the request to fail silently
 or can raise one of two errors: a slave error or a decode error. These errors are raised
 on the BRESP (write) and RRESP (read) response signals, another crucial part of the 
 TrustZone's AXI controls. \cite{benhani_security_2017}
@@ -145,7 +144,7 @@ peripherals reside on the Advanced Peripheral Bus (APB), and are interfaced with
 of the system via the AXI-APB bridge.\cite{noauthor_arm_nodate}
 
 As peripherals are often outside the scope of the designer's control, backwards
-compatability is an impoerant factor in system design. Therefore, the APB specifications
+compatibility is an important factor in system design. Therefore, the APB specifications
 do not allow for the implementation of an equivalent mechanism to the NS bit, as any such
 implementation would not be compatible with prior versions of the AMBA protocol. To 
 mitigate this, the TrustZone architecture allocates responsibility for security
@@ -170,7 +169,7 @@ which offers identical capabilities as well as an interface with their Avalon st
 protocol. \cite{noauthor_intel_nodate}
 
 The TrustZone documentation does not outline specific treatment of these interconnect
-devices, however research explored in sections III and IV below demonstrate that
+devices, however, research explored in sections III and IV below demonstrate that
 substantial vulnerabilities exist in this logic. As all bus traffic in the system must
 flow through this IP, it is imperative that it be adequately secured.
 
@@ -184,7 +183,7 @@ elements.
 
 Like the AXI Interconnect, the implementation of the Memory Management Unit (MMU) is
 manufacturer specific. However, both Intel/Altera and Xilinx's offerings provide
-compatability with the TrustZone concept of NS bits, and verify security status as well as
+compatibility with the TrustZone concept of NS bits, and verify security status as well as
 the observance of traditional process isolation. \cite{gross_breaking_2019}
 
 Additionally, the memory is heavily integrated into the caching system present in almost
@@ -212,7 +211,7 @@ later in this paper.
 \subsection{Implementational Issues}
 A variety of sources, including \cite{cerdeira_sok_nodate}, \cite{benhani_security_2019},
 and \cite{benhani_security_2017} agree that a large percentage of the vulnerabilities
-introduced in the process of utilizing the TrustZone Architecture ocurr not solely due to
+introduced in the process of utilizing the TrustZone Architecture occur not solely due to
 architectural issues such as those defined above, but also as a result of imperfect
 implementation on the part of the device developer. Many of these vulnerabilities arise
 due to the complexity of a project of such a scale and the difficulties inherent in
@@ -243,7 +242,7 @@ environments, such vulnerabilities are of real concern.
 
 Covert side channel attacks are also of concern in FPGA devices, as 
 \cite{giechaskiel_leaky_2018} explores. While the concept of modifying the operating
-parameters of the CPU doesn't apply in a processor-less system, there is a great deal of
+parameters of the CPU does not apply in a processor-less system, there is a great deal of
 potential for the leakage of data between adjacent routes in the gate array.
 
 \section{TrustZone Related Research in FPGA-Based Embedded Systems}
@@ -259,7 +258,7 @@ in references in the preceding section. Several such discussions are outlined be
 The concept of the NS bits (Formally the AWPROT and ARPROT signals) as they relate to the
 AXI bus's overall security makes them an attractive target for compromise by actors 
 seeking to violate the integrity of the Secure World. As Benhani et al. demonstrate in 
-\cite{benhani_security_2019}, two potentia objectives can be achieved through malicious 
+\cite{benhani_security_2019}, two potential objectives can be achieved through malicious 
 actions on these bits. By altering these bits such that they are no longer tied high 
 (which otherwise prevents access to the Secure World), it is possible for a non-secure 
 component to access Secure World Resources. Alternatively, by taking a previously variable
@@ -271,10 +270,10 @@ At first glance, a modification such as this seems infeasible, both due to the n
 the access required to implement them as well as the high likelihood of discovery that a
 suddenly nonfunctioning system component would imply. However, this is not necessarily the
 case. Such vulnerabilities could be exploited easily by either a "rogue designer" or,
-alternatively, by a compromised element of the buildchain. Furthermore, the nature of the
-modification is not necessarily such that a device consistenyl behaves in a manner that is
+alternatively, by a compromised element of the build-chain. Furthermore, the nature of the
+modification is not necessarily such that a device consistently behaves in a manner that is
 indicative of the faulty configuration. Rather, the alteration of these signals could be
-acomplished by more complex logic, such that the component being attacked behaves as
+accomplished by more complex logic, such that the component being attacked behaves as
 originally intended except under a precise set of circumstances.
 
 This type of vulnerability has always been present in any kind of embedded system via a
@@ -298,7 +297,7 @@ The risk of data leakage posed by the return of a false positive on these signal
 somewhat less prominent than in the case of modification of the NS bits, as it would
 require the master to make an erroneous request that would normally result in an error. 
 However, the risk of a denial of service attack remains present. Additionally, it is worth
-mentioning that the poossibility of the malicious use of other logic to trigger such an
+mentioning that the possibility of the malicious use of other logic to trigger such an
 exploit under specific circumstances is equally as valid here as it is in the NS attacks.
 
 \subsection{Attacks on the AXI Interconnect}
@@ -319,7 +318,7 @@ as those suggested in the literature \cite{bukasa_how_2018}.
 \subsection{Direct Memory Access Attacks}
 In \cite{gross_breaking_2019}, Gross et al. outline a number of potential attack vectors
 which focus on compromising secure elements of the system's main memory by means of 
-compromised hardware contained within the PL. As outlined in Section II,most of these
+compromised hardware contained within the PL. As outlined in Section II, most of these
 details are manufacturer specific, and \cite{gross_breaking_2019} focuses heavily on
 Xilinx systems.
 
@@ -329,7 +328,7 @@ compromising the mechanisms by which the Secure World verifies the integrity of 
 executables. By manipulating PL components (As outlined in the preceding subsections),
 the researchers were able to isolate and extract the routine that provided this
 verification capability, and succeeded in modifying it such that it would always indicate
-that a routine had been verified.They then were able to redeploy it to the system, and
+that a routine had been verified. They then were able to redeploy it to the system, and
 proceeded to demonstrate the execution of their own untrusted binary in the Secure World.
 
 The literature \cite{benhani_security_2019} outlines a similar memory vulnerability
@@ -359,9 +358,9 @@ reporting unprivileged escalation or denial of service attacks.
 \subsection{AXI Isolation}
 Taking things a step beyond predefinition of permissions, the authors of 
 \cite{benhani_security_2017} propose a modification of the fundamental nature of the PS/PL
-interaction: the isolation of worlds by seperate AXI Interconnect Logic, rather than a 
+interaction: the isolation of worlds by separate AXI Interconnect Logic, rather than a 
 unified logic responsible for its own enforcement. By moving all permission verification
-processing into the PS, and reaching out to the apropriate AXI Interconnect for the world
+processing into the PS, and reaching out to the appropriate AXI Interconnect for the world
 in question, there is no longer any capacity for malicious logic to alter the security
 signals and gain unwarranted access, nor can a denial of service attack be implemented.
 
@@ -369,7 +368,7 @@ Although this mitigation strategy provides unparalleled security with regards to
 bus, it does so at a tremendous performance cost. The PS must now integrate permissions 
 verification into its schedule, which decreases the amount of time in which it can perform
 the trusted operations it was intended to do. Furthermore, the complete isolation of
-worlds on seperate AXI Interfaces means that one of the chief advantages of secure IP is
+worlds on separate AXI Interfaces means that one of the chief advantages of secure IP is
 no longer available: said IP can no longer access resources in both worlds. In some cases,
 this will require a duplication of IP in the two worlds. In others, it will require the PS
 to perform additional work in order to transfer information between worlds so that all
@@ -384,7 +383,7 @@ vulnerabilities to exist in this code, either through pure error or the maliciou
 of a rogue designer or a compromised design tool. 
 
 To this end the \cite{benhani_security_2019} poses the concept of an automated
-verification system to check files generated by the synthesis proess are in compliance
+verification system to check files generated by the synthesis process are in compliance
 with the best practices of TrustZone implementation. This would in many ways parallel the
 feedback provided by the synthesis tools themselves, however such tools are blind to the
 nature of the code being compiled. This necessitates the use of a (not currently existent)
@@ -395,7 +394,7 @@ As the implementation of this architecture on FPGA-Based SoCs is a relatively no
 concept, numerous opportunities exist for further research to contribute to the body of
 knowledge currently existent on the topic. Several of the concepts outlined below are
 mentioned briefly in some of the existing works discussed previously, while others draw
-from contempory work done in other similar fields that have applicability to the concerns
+from contemporary work done in other similar fields that have applicability to the concerns
 outlined above.
 
 \subsection{Cache Exploitation}
@@ -431,9 +430,9 @@ systems and is known for its robust suite of security countermeasures, the intro
 the system into an FPGA-Based Embedded System introduces a considerable set of additional
 vulnerabilities which must be carefully evaluated to ensure that the nature of this
 programmable logic does not defeat the security the platform provides. As such a synthesis
-is a realtively novel field, the body of work presently existing on such a system is
+is a relatively novel field, the body of work presently existing on such a system is
 minimal. Accordingly, developers should proceed with care in implementing such a system,
-and need to be congnizant of the vulnerabilities outlined herein, as well as the potential
+and need to be cognizant of the vulnerabilities outlined herein, as well as the potential
 for additional, as of yet unknown vulnerabilities.
 
 Developers should be reassured that mitigation strategies have been proposed for several
@@ -451,15 +450,17 @@ the authoring of this paper.
 \bibliographystyle{IEEEtran}
 
 \bibliography{ZoteroExport}
+
+\vskip 0pt plus -1fil
 \begin{IEEEbiography}[{
 	\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{sdonchez}}]
 	{Stephen Donchez}
 (M'20) was born in Bethlehem, PA, USA in 1998. He anticipates receiving his B.S. in
 computer engineering from Villanova University, Villanova, PA in 2020.
 
-In the summer of 2018 he was a software engineering intern at Harris Coroporation 
+In the summer of 2018 he was a software engineering intern at Harris Corporation  
 (now L3Harris Technologies, Inc.). He returned to L3Harris for the summer of 2019 as a 
-systems engineering intern, and anticpates returning to the same position for the summer
+systems engineering intern, and anticipates returning to the same position for the summer
 of 2020 at their facility in Clifton, NJ. His research interests include FPGAs, embedded
 software development, and embedded systems with a focus on System-on-a-Chip technologies.
 
